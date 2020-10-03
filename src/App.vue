@@ -1,10 +1,47 @@
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/">
+      Home
+    </router-link> |
+    <router-link to="/about">
+      About
+    </router-link>
   </div>
-  <router-view/>
+  <router-view @flash="newFlash" />
+  <div class="flashes">
+    <span
+      v-for="(flash, index) in flashMessages"
+      :key="index"
+    >{{ flash.message }}</span>
+  </div>
 </template>
+
+<script lang="ts">
+import { Options, Vue } from 'vue-class-component';
+
+enum flashType {
+  success, error
+}
+
+interface Flash {
+  message: string;
+  type: flashType;
+}
+
+@Options({
+  data: () => ({
+    flashMessages: [] as Flash[],
+  }),
+
+  methods: {
+    newFlash(data: Flash) {
+      this.flashMessages.push(data);
+    },
+  },
+})
+
+export default class Home extends Vue {}
+</script>
 
 <style lang="scss">
 #app {
@@ -26,5 +63,10 @@
       color: #42b983;
     }
   }
+}
+
+.flashes {
+  display: flex;
+  flex-direction: column;
 }
 </style>
