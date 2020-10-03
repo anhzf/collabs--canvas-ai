@@ -9,10 +9,17 @@
   </div>
   <router-view @flash="newFlash" />
   <div class="flashes">
-    <span
+    <div
+      class="flash"
       v-for="(flash, index) in flashMessages"
       :key="index"
-    >{{ flash.message }}</span>
+    >
+      <span>{{ flash.message }}</span>
+      <span
+        class="close"
+        @click="delFlash(index)"
+      >X</span>
+    </div>
   </div>
 </template>
 
@@ -36,6 +43,9 @@ interface Flash {
   methods: {
     newFlash(data: Flash) {
       this.flashMessages.push(data);
+    },
+    delFlash(id: number) {
+      delete this.flashMessages[id];
     },
   },
 })
@@ -71,5 +81,19 @@ export default class Home extends Vue {}
   width: 100%;
   display: flex;
   flex-direction: column;
+
+  .flash {
+    position: relative;
+
+    &:hover {
+      background-color: #0001;
+    }
+
+    .close {
+      cursor: pointer;
+      position: absolute;
+      right: 2em;
+    }
+  }
 }
 </style>

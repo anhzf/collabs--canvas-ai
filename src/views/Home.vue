@@ -13,9 +13,14 @@
     />
     <div>X: {{ x }}</div>
     <div>Y: {{ y }}</div>
-    <button @click="sendData">
-      send my data
-    </button>
+    <div>
+      <button @click="sendData">
+        send my data
+      </button>
+      <button @click="clearCanvas">
+        clear canvas
+      </button>
+    </div>
   </div>
 </template>
 
@@ -62,11 +67,20 @@ import analystPicture from '@/services/analystPicture';
       this.ctx.closePath();
     },
 
+    clearCanvas() {
+      const { width, height } = this.ctx.canvas;
+      this.ctx.clearRect(0, 0, width, height);
+    },
+
     sendData() {
-      analystPicture.getAnalyst(this.$refs.cvs);
+      analystPicture.getAnalyst(this.$refs.cvs)
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err));
+
+      console.log({ img: analystPicture.lastPicSent });
 
       this.$emit('flash', {
-        message: `Data sent to ${analystPicture.apiUrl}`,
+        message: `Data sent to ${analystPicture.apiUrl}, see console to see output`,
         type: 1,
       });
     },
