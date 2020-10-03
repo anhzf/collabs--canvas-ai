@@ -1,10 +1,15 @@
 <template>
-  <div class="home">
+  <div
+    class="home"
+    @keydown.ctrl="handleSystemKey"
+  >
     <canvas
       ref="cvs"
       width="500"
       height="500"
       @mousemove="draw"
+      @mousedown="beginDrawing"
+      @mouseup="stopDrawing"
     />
     <div>X: {{ x }}</div>
     <div>Y: {{ y }}</div>
@@ -23,14 +28,28 @@ import analystPicture from '@/services/analystPicture';
     ctx: CanvasRenderingContext2D,
     x: 0,
     y: 0,
+    isDrawing: false,
   }),
 
   methods: {
-    draw(e: MouseEvent): void {
-      this.drawLine(this.x, this.y, e.offsetX, e.offsetY);
-      // Set the end path
+    beginDrawing(e: MouseEvent) {
+      // set starting point to where the mousedown
       this.x = e.offsetX;
       this.y = e.offsetY;
+      this.isDrawing = true;
+    },
+
+    stopDrawing() {
+      this.isDrawing = false;
+    },
+
+    draw(e: MouseEvent): void {
+      if (this.isDrawing) {
+        this.drawLine(this.x, this.y, e.offsetX, e.offsetY);
+        // set starting point to the last offset move
+        this.x = e.offsetX;
+        this.y = e.offsetY;
+      }
     },
 
     drawLine(fromX: number, fromY: number, toX: number, toY: number) {
@@ -55,10 +74,15 @@ import analystPicture from '@/services/analystPicture';
 
   mounted() {
     const el = this.$refs.cvs as HTMLCanvasElement;
-    const ctx = el.getContext('2d') as CanvasRenderingContext2D;
 
-    this.ctx = ctx;
+    this.ctx = el.getContext('2d') as CanvasRenderingContext2D;
   },
 })
 export default class Home extends Vue {}
 </script>
+
+<style lang="scss" scoped>
+canvas {
+  border: 1px solid #f00;
+}
+</style>

@@ -1,5 +1,6 @@
 interface AnalystRequest {
   method: 'POST';
+  mode: 'no-cors';
   body: FormData;
 }
 
@@ -31,6 +32,7 @@ export default class AnalystPicture {
 
     return {
       method: 'POST',
+      mode: 'no-cors',
       body: fd,
     };
   }

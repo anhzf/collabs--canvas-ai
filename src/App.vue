@@ -66,6 +66,9 @@ export default class Home extends Vue {}
 }
 
 .flashes {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
