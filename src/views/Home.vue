@@ -73,15 +73,16 @@ import analystPicture from '@/services/analystPicture';
     },
 
     sendData() {
-      analystPicture.getAnalyst(this.$refs.cvs)
-        .then((res) => console.log(res))
-        .catch((err) => console.log(err));
+      // eslint-disable-next-line new-cap
+      const analyser = new analystPicture(this.$refs.cvs);
 
-      console.log({ img: analystPicture.lastPicSent });
+      analyser.getAnalyst().then((res) => {
+        console.log(res);
 
-      this.$emit('flash', {
-        message: `Data sent to ${analystPicture.apiUrl}, see console to see output`,
-        type: 1,
+        this.$emit('flash', {
+          message: `Data sent to ${analystPicture.apiUrl}, see console to see output`,
+          type: 1,
+        });
       });
     },
   },

@@ -13,26 +13,24 @@ interface Analysis {
 // }
 
 export default class AnalystPicture {
-  private static cvs: HTMLCanvasElement;
+  // eslint-disable-next-line no-useless-constructor
+  constructor(
+    private cvs: HTMLCanvasElement,
+  ) {}
 
-  public static lastPicSent: string;
+  public async getAnalyst(): Promise<Analysis> {
+    const req = await this.buildRequest();
+    const res = await fetch(AnalystPicture.apiUrl, req);
+    const resData = await res.json();
 
-  public static getAnalyst(cvs: HTMLCanvasElement): Promise<Analysis> {
-    this.cvs = cvs;
-    const req = this.buildRequest();
-
-    return fetch(this.apiUrl, req)
-      .then((res: Response) => res.json())
-      .then((res: Analysis) => res);
+    return resData;
   }
 
-  private static buildRequest(): AnalystRequest {
+  private async buildRequest(): Promise<AnalystRequest> {
     const fd = new FormData();
-    const base64Pic = this.cvs.toDataURL();
-    // fd.append('image', this.canvasToBlob());
-    fd.append('image', base64Pic);
 
-    this.lastPicSent = base64Pic;
+    fd.append('image', await this.getImgBlob());
+
     return {
       method: 'POST',
       mode: 'no-cors',
@@ -40,9 +38,11 @@ export default class AnalystPicture {
     };
   }
 
-  // private static canvasToBlob(): Blob {
-  //   return this.cvs.toBlob((blob: Blob) => blob);
-  // }
+  public getImgBlob(): Promise<Blob> {
+    return new Promise((resolve) => {
+      this.cvs.toBlob((imgBlob) => resolve(imgBlob ?? new Blob()));
+    });
+  }
 
   public static set apiUrl(v: string) {
     sessionStorage.setItem('apiUrl', v);
