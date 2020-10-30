@@ -20,6 +20,18 @@
       <button @click="clearCanvas">
         clear canvas
       </button>
+      <div>
+        <input
+          v-model="lineWidth"
+          type="range"
+          min="1"
+          max="20"
+        >
+        <div>
+          <small>Line width = </small>
+          <span>{{ lineWidth }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -34,6 +46,8 @@ import analystPicture from '@/services/analystPicture';
     x: 0,
     y: 0,
     isDrawing: false,
+
+    lineWidth: 1,
   }),
 
   methods: {
@@ -60,7 +74,7 @@ import analystPicture from '@/services/analystPicture';
     drawLine(fromX: number, fromY: number, toX: number, toY: number) {
       this.ctx.beginPath();
       this.ctx.strokeStyle = '#333';
-      this.ctx.lineWidth = 1;
+      this.ctx.lineWidth = this.lineWidth;
       this.ctx.moveTo(fromX, fromY);
       this.ctx.lineTo(toX, toY);
       this.ctx.stroke();
@@ -76,9 +90,7 @@ import analystPicture from '@/services/analystPicture';
       // eslint-disable-next-line new-cap
       const analyser = new analystPicture(this.$refs.cvs);
 
-      analyser.getAnalyst().then((res) => {
-        console.log(res);
-
+      analyser.getAnalyst().then(() => {
         this.$emit('flash', {
           message: `Data sent to ${analystPicture.apiUrl}, see console to see output`,
           type: 1,
