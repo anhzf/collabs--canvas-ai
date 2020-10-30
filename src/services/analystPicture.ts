@@ -28,8 +28,9 @@ export default class AnalystPicture {
 
   private async buildRequest(): Promise<AnalystRequest> {
     const fd = new FormData();
+    const img = await this.getImgBlob();
 
-    fd.append('image', await this.getImgBlob());
+    fd.append('image', img);
 
     return {
       method: 'POST',
@@ -40,8 +41,17 @@ export default class AnalystPicture {
 
   public getImgBlob(): Promise<Blob> {
     return new Promise((resolve) => {
-      this.cvs.toBlob((imgBlob) => resolve(imgBlob ?? new Blob()));
+      this.resizeCanvas(24, 24).toBlob((imgBlob) => resolve(imgBlob ?? new Blob()));
     });
+  }
+
+  public resizeCanvas(width: number, height: number): HTMLCanvasElement {
+    const virtualCanvas = document.createElement('canvas');
+    const virtualCanvasContext = virtualCanvas.getContext('2d')!;
+
+    virtualCanvasContext.drawImage(this.cvs, 0, 0, width, height);
+
+    return virtualCanvas;
   }
 
   public static set apiUrl(v: string) {
