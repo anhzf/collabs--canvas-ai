@@ -11,8 +11,14 @@
       @mousedown="beginDrawing"
       @mouseup="stopDrawing"
     />
-    <div>X: {{ x }}</div>
-    <div>Y: {{ y }}</div>
+    <div>
+      <span>api url = </span>
+      <input
+        v-model="apiUrl"
+        type="text"
+        ref="apiUrlInput"
+      >
+    </div>
     <div>
       <button @click="sendData">
         send my data
@@ -48,6 +54,8 @@ import analystPicture from '@/services/analystPicture';
     isDrawing: false,
 
     lineWidth: 1,
+
+    apiUrl: '',
   }),
 
   methods: {
@@ -103,6 +111,13 @@ import analystPicture from '@/services/analystPicture';
     const el = this.$refs.cvs as HTMLCanvasElement;
 
     this.ctx = el.getContext('2d') as CanvasRenderingContext2D;
+
+    try {
+      this.apiUrl = analystPicture.apiUrl;
+    } catch (err) {
+      window.alert(err);
+      this.$refs.apiUrlInput.focus();
+    }
   },
 })
 export default class Home extends Vue {}

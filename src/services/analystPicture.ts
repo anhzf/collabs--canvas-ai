@@ -41,7 +41,7 @@ export default class AnalystPicture {
 
   public getImgBlob(): Promise<Blob> {
     return new Promise((resolve) => {
-      this.resizeCanvas(24, 24).toBlob((imgBlob) => resolve(imgBlob ?? new Blob()));
+      this.resizeCanvas(28, 28).toBlob((imgBlob) => resolve(imgBlob ?? new Blob()));
     });
   }
 
@@ -62,8 +62,7 @@ export default class AnalystPicture {
     const fromsessionStorage = sessionStorage.getItem('apiUrl');
 
     if (!fromsessionStorage) {
-      this.apiUrl = window.prompt('Please specify the API URL to send') ?? '';
-      return this.apiUrl;
+      throw new Error('Please input your API URL first!');
     }
     return fromsessionStorage;
   }
