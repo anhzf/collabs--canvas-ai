@@ -26,7 +26,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 
-enum flashType {
+export enum flashType {
   success, error
 }
 

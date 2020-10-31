@@ -11,8 +11,14 @@
       @mousedown="beginDrawing"
       @mouseup="stopDrawing"
     />
-    <div>X: {{ x }}</div>
-    <div>Y: {{ y }}</div>
+    <div>
+      <span>api url = </span>
+      <input
+        v-model="apiUrl"
+        type="text"
+        ref="apiUrlInput"
+      >
+    </div>
     <div>
       <button @click="sendData">
         send my data
@@ -33,22 +39,37 @@
         </div>
       </div>
     </div>
+    <button @click="realTime = !realTime">
+      <input
+        v-model="realTime"
+        type="checkbox"
+      >
+      Toggle Realtime
+    </button>
   </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import analystPicture from '@/services/analystPicture';
+import { debounceWithPromise } from '@/utils';
+import { flashType } from '@/App.vue';
 
 @Options({
-  data: () => ({
-    ctx: CanvasRenderingContext2D,
-    x: 0,
-    y: 0,
-    isDrawing: false,
+  data() {
+    return {
+      ctx: CanvasRenderingContext2D,
+      x: 0,
+      y: 0,
+      isDrawing: false,
 
-    lineWidth: 1,
-  }),
+      lineWidth: 1,
+      realTime: false,
+
+      apiUrl: '',
+      debouncedAnalysist: null,
+    };
+  },
 
   methods: {
     beginDrawing(e: MouseEvent) {
@@ -79,6 +100,8 @@ import analystPicture from '@/services/analystPicture';
       this.ctx.lineTo(toX, toY);
       this.ctx.stroke();
       this.ctx.closePath();
+
+      if (this.realTime) this.debouncedAnalysist();
     },
 
     clearCanvas() {
@@ -90,12 +113,19 @@ import analystPicture from '@/services/analystPicture';
       // eslint-disable-next-line new-cap
       const analyser = new analystPicture(this.$refs.cvs);
 
-      analyser.getAnalyst().then(() => {
-        this.$emit('flash', {
-          message: `Data sent to ${analystPicture.apiUrl}, see console to see output`,
-          type: 1,
+      analyser.getAnalyst()
+        .then(() => {
+          this.$emit('flash', {
+            message: `Data sent to ${analystPicture.apiUrl}, see console to see output`,
+            type: flashType.success,
+          });
+        })
+        .catch(() => {
+          this.$emit('flash', {
+            message: 'Oops, something went wrong',
+            type: flashType.error,
+          });
         });
-      });
     },
   },
 
@@ -103,6 +133,24 @@ import analystPicture from '@/services/analystPicture';
     const el = this.$refs.cvs as HTMLCanvasElement;
 
     this.ctx = el.getContext('2d') as CanvasRenderingContext2D;
+
+    this.debouncedAnalysist = debounceWithPromise(this.sendData);
+
+    try {
+      this.apiUrl = analystPicture.apiUrl;
+    } catch (err) {
+      window.alert(err);
+      this.$refs.apiUrlInput.focus();
+    }
+  },
+
+  watch: {
+    apiUrl: {
+      immediate: true,
+      handler(newVal) {
+        analystPicture.apiUrl = newVal;
+      },
+    },
   },
 })
 export default class Home extends Vue {}
