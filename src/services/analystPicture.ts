@@ -61,7 +61,7 @@ export default class AnalystPicture {
   public static get apiUrl(): string {
     const fromsessionStorage = sessionStorage.getItem('apiUrl');
 
-    if (!fromsessionStorage) {
+    if (!fromsessionStorage && fromsessionStorage !== '') {
       throw new Error('Please input your API URL first!');
     }
     return fromsessionStorage;
