@@ -5,7 +5,8 @@ interface AnalystRequest {
 }
 
 interface Analysis {
-  prediction: number;
+  response: number;
+  status: number;
 }
 
 // interface analystPictureOptions {

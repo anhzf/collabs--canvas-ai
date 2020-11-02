@@ -3,6 +3,7 @@
     class="home"
     @keydown.ctrl="handleSystemKey"
   >
+    <div>Hasil Prediksi : {{ analysist }}</div>
     <canvas
       ref="cvs"
       width="500"
@@ -63,6 +64,8 @@ import { flashType } from '@/App.vue';
       y: 0,
       isDrawing: false,
 
+      analysist: '',
+
       lineWidth: 1,
       realTime: false,
 
@@ -114,11 +117,12 @@ import { flashType } from '@/App.vue';
       const analyser = new analystPicture(this.$refs.cvs);
 
       analyser.getAnalyst()
-        .then(() => {
-          this.$emit('flash', {
-            message: `Data sent to ${analystPicture.apiUrl}, see console to see output`,
-            type: flashType.success,
-          });
+        .then(({ response }) => {
+          this.analysist = response;
+          // this.$emit('flash', {
+          //   message: `Data sent to ${analystPicture.apiUrl}, see console to see output`,
+          //   type: flashType.success,
+          // });
         })
         .catch(() => {
           this.$emit('flash', {
