@@ -10,7 +10,7 @@
   <router-view @flash="newFlash" />
   <div class="flashes">
     <div
-      class="flash"
+      :class="{ flash: true, 'flash--error': isErrorFlash(flash) }"
       v-for="(flash, index) in flashMessages"
       :key="index"
     >
@@ -46,6 +46,9 @@ interface Flash {
     },
     delFlash(id: number) {
       delete this.flashMessages[id];
+    },
+    isErrorFlash(flash: Flash): boolean {
+      return flash.type === flashType.error;
     },
   },
 })
@@ -83,10 +86,20 @@ export default class Home extends Vue {}
   flex-direction: column;
 
   .flash {
+    user-select: none;
     position: relative;
 
     &:hover {
       background-color: #0001;
+    }
+
+    &--error {
+      color: yellow;
+      background-color: #f006;
+
+      &:hover {
+        background-color: #f009;
+      }
     }
 
     .close {
