@@ -31,7 +31,7 @@ export default class AnalystPicture {
     const fd = new FormData();
     const img = await this.getImgBlob();
 
-    fd.append('image', img);
+    fd.append('file', img);
 
     return {
       method: 'POST',

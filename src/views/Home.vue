@@ -69,7 +69,7 @@ import { flashType } from '@/App.vue';
       lineWidth: 1,
       realTime: false,
 
-      apiUrl: '',
+      apiUrl: analystPicture.apiUrl,
       debouncedAnalysist: null,
     };
   },
@@ -119,10 +119,6 @@ import { flashType } from '@/App.vue';
       analyser.getAnalyst()
         .then(({ response }) => {
           this.analysist = response;
-          // this.$emit('flash', {
-          //   message: `Data sent to ${analystPicture.apiUrl}, see console to see output`,
-          //   type: flashType.success,
-          // });
         })
         .catch(() => {
           this.$emit('flash', {
