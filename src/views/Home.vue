@@ -75,6 +75,10 @@ import { flashType } from '@/App.vue';
     };
   },
 
+  emits: [
+    'flash',
+  ],
+
   methods: {
     beginDrawing(e: MouseEvent) {
       // set starting point to where the mousedown
@@ -141,6 +145,7 @@ import { flashType } from '@/App.vue';
     try {
       this.apiUrl = analystPicture.apiUrl;
     } catch (err) {
+      // eslint-disable-next-line no-alert
       window.alert(err);
       this.$refs.apiUrlInput.focus();
     }

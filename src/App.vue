@@ -13,12 +13,11 @@
       :class="{ flash: true, 'flash--error': isErrorFlash(flash) }"
       v-for="(flash, index) in flashMessages"
       :key="index"
+      @click="delFlash(index)"
+      title="close"
     >
       <span>{{ flash.message }}</span>
-      <span
-        class="close"
-        @click="delFlash(index)"
-      >X</span>
+      <span class="close">X</span>
     </div>
   </div>
 </template>
@@ -45,7 +44,7 @@ interface Flash {
       this.flashMessages.push(data);
     },
     delFlash(id: number) {
-      delete this.flashMessages[id];
+      this.flashMessages = this.flashMessages.filter((v: Flash, i: number) => i !== id);
     },
     isErrorFlash(flash: Flash): boolean {
       return flash.type === flashType.error;
@@ -86,6 +85,7 @@ export default class Home extends Vue {}
   flex-direction: column;
 
   .flash {
+    cursor: pointer;
     user-select: none;
     position: relative;
 
@@ -103,7 +103,6 @@ export default class Home extends Vue {}
     }
 
     .close {
-      cursor: pointer;
       position: absolute;
       right: 2em;
     }
