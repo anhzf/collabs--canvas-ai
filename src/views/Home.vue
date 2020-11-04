@@ -16,7 +16,7 @@
       <span>api url = </span>
       <input
         v-model="apiUrl"
-        type="text"
+        type="url"
         ref="apiUrlInput"
       >
     </div>
@@ -66,10 +66,11 @@ import { flashType } from '@/App.vue';
 
       analysist: '',
 
-      lineWidth: 1,
-      realTime: false,
+      lineWidth: 10,
+      lineColor: '#333',
 
-      apiUrl: analystPicture.apiUrl,
+      realTime: false,
+      apiUrl: '',
       debouncedAnalysist: null,
     };
   },
@@ -86,23 +87,22 @@ import { flashType } from '@/App.vue';
       this.isDrawing = false;
     },
 
-    draw(e: MouseEvent): void {
+    draw({ offsetX, offsetY }: MouseEvent): void {
       if (this.isDrawing) {
-        this.drawLine(this.x, this.y, e.offsetX, e.offsetY);
+        this.drawLine(this.x, this.y, offsetX, offsetY);
         // set starting point to the last offset move
-        this.x = e.offsetX;
-        this.y = e.offsetY;
+        ([this.x, this.y] = [offsetX, offsetY]);
       }
     },
 
     drawLine(fromX: number, fromY: number, toX: number, toY: number) {
-      this.ctx.beginPath();
-      this.ctx.strokeStyle = '#333';
-      this.ctx.lineWidth = this.lineWidth;
-      this.ctx.moveTo(fromX, fromY);
-      this.ctx.lineTo(toX, toY);
-      this.ctx.stroke();
-      this.ctx.closePath();
+      const drawingContext = this.ctx as CanvasRenderingContext2D;
+      drawingContext.beginPath();
+      drawingContext.lineWidth = this.lineWidth;
+      drawingContext.moveTo(fromX, fromY);
+      drawingContext.lineTo(toX, toY);
+      drawingContext.stroke();
+      drawingContext.closePath();
 
       if (this.realTime) this.debouncedAnalysist();
     },
@@ -133,6 +133,8 @@ import { flashType } from '@/App.vue';
     const el = this.$refs.cvs as HTMLCanvasElement;
 
     this.ctx = el.getContext('2d') as CanvasRenderingContext2D;
+    this.ctx.lineJoin = 'round';
+    this.ctx.lineCap = 'round';
 
     this.debouncedAnalysist = debounceWithPromise(this.sendData);
 
@@ -145,8 +147,15 @@ import { flashType } from '@/App.vue';
   },
 
   watch: {
-    apiUrl: {
+    lineColor: {
       immediate: true,
+      handler(newVal) {
+        this.ctx.strokeStyle = newVal;
+      },
+    },
+
+    apiUrl: {
+      immediate: false,
       handler(newVal) {
         analystPicture.apiUrl = newVal;
       },

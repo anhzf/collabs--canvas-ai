@@ -48,6 +48,7 @@ export default class AnalystPicture {
 
   public resizeCanvas(width: number, height: number): HTMLCanvasElement {
     const virtualCanvas = document.createElement('canvas');
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const virtualCanvasContext = virtualCanvas.getContext('2d')!;
 
     virtualCanvasContext.drawImage(this.cvs, 0, 0, width, height);

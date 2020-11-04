@@ -11,7 +11,7 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": true
     },
-    "vetur.experimental.templateInterpolationService": true,
+    "vetur.experimental.templateInterpolationService": false,
     "[javascript]": {
         "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
